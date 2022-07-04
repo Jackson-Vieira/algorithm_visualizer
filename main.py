@@ -1,0 +1,132 @@
+import pygame
+import random
+
+from sys import exit
+
+from settings import *
+from algorithms import *
+
+pygame.init()
+
+class DrawSettings:
+    def __init__(self, lst):
+        self.screen = pygame.display.set_mode((LOBBY_WIDTH, LOBBY_HEIGTH))
+        pygame.display.set_caption(NAME)
+        self.algorithm = None
+        self.sett_lst(lst)
+    
+    def sett_lst(self, lst):
+        self.lst = lst
+        self.min_val = min(lst)
+        self.max_val = max(lst)
+        self.unsorted = False
+
+        self.block_width =  round((DISPLAY_WIDTH - SIDE_PADDING) / len(lst))
+        self.block_height = round((DISPLAY_HEIGTH - TOP_PADDING) / (self.max_val - self.min_val))
+        self.pos_x = SIDE_PADDING//2
+
+    def drawList(self, index_colors = {}):
+        self.screen.fill(BK_COLOR)
+
+        for i, elm in enumerate(self.lst):
+            x = self.pos_x + i * self.block_width
+            y = DISPLAY_HEIGTH - (elm - self.min_val) * self.block_height
+
+            color = BLOCK_COLORS[i%2]
+
+            if i in index_colors:
+                color = index_colors[i]
+            
+
+            pygame.draw.rect(self.screen, (color), (x, y, self.block_width, DISPLAY_WIDTH))
+
+        pygame.display.update()
+
+
+def update(draw_sett):
+    draw_sett.screen.fill(BK_COLOR)
+    draw_sett.drawList()
+
+
+def generateList(n):
+    lst = [i for i in range(n)]
+    random.shuffle(lst)
+    return lst
+
+
+def drawText(draw_sett, algorithm, pos):
+    font = pygame.font.get_default_font()
+    font_obj = pygame.font.SysFont(font, 24)
+    font_render = font_obj.render(f"{algorithm}", True, (255,255,255))
+    draw_sett.screen.blit(font_render, pos)
+
+
+def event(unsorted):
+    for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
+
+def lobby(draw_sett):
+    # ALGORITHMS
+    # QUIT
+    algorithms = ['1 - BubbleSort', '2 - SelectionSort', '3 - InsertionSort', '4 - MergeSort', 'ESC - Quit']
+    buttons_pos = [(10, 20),(10, 50),(10, 80),(10, 110), (10, 140)]
+    while True:
+        draw_sett.screen.fill(BK_COLOR)
+        x = 0
+        for pos in buttons_pos:
+            drawText(draw_sett, algorithms[x], pos)
+            x += 1
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    exit()
+                if event.key == pygame.K_1:
+                    return 0
+                if event.key == pygame.K_2:
+                    return 1
+                if event.key == pygame.K_3:
+                    return 2
+                if event.key == pygame.K_4:
+                    return 3
+
+        pygame.display.update()
+    
+def main():
+    clock = pygame.time.Clock()
+    algorithms = [bubbleSort, selectionSort, insertionSort, mergeSort]
+    unsorted = True
+
+    lst = generateList(100)
+    draw_setts = DrawSettings(lst)
+    algorithm = algorithms[lobby(draw_setts)]
+    alg_generator = algorithm(draw_setts)
+
+    draw_setts.screen = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGTH))
+    run = True
+    while run:
+        clock.tick(60) # FPS 
+        if unsorted:
+            if algorithm == mergeSort:  # Expecif case for mergeSort
+                    for merge in alg_generator:
+                        # entering in the node merge
+                        for n in merge: # traversing the merge (yield)
+                            event(unsorted)
+                    unsorted = False
+                    print("FINISH")
+            else:
+                try:
+                    next(alg_generator)
+
+                except StopIteration:
+                    unsorted = False
+                    print("FINISH")
+        else:
+            update(draw_setts)
+        
+        event(unsorted)
+    
+if __name__ == "__main__":
+    main()
