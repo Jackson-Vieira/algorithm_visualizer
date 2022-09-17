@@ -9,8 +9,8 @@ def bubbleSort(draw_setts):
                 lst[k], lst[k+1] = lst[k+1], lst[k]
                 draw_setts.drawList({k: DARK_RED, k + 1: RED})
                 yield 1
-
     return lst
+
 
 def selectionSort(draw_setts):
     lst = draw_setts.lst
@@ -45,7 +45,6 @@ def insertionSort(draw_setts):
     return lst
 
 
-
 merges = []
 def mergeSort(draw_setts, i=0, end=None):
     
@@ -60,7 +59,6 @@ def mergeSort(draw_setts, i=0, end=None):
         merges.append(merge(lst, draw_setts, i, md, end))
         
     return merges
-
 def merge(lst, draw_setts, i, md, end):
     left = lst[i:md]
     right = lst[md:end]

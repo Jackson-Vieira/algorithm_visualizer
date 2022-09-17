@@ -2,6 +2,7 @@ import pygame
 import random
 
 from sys import exit
+from time import time
 
 from settings import *
 from algorithms import *
@@ -10,7 +11,7 @@ pygame.init()
 
 class DrawSettings:
     def __init__(self, lst):
-        self.screen = pygame.display.set_mode((LOBBY_WIDTH, LOBBY_HEIGTH))
+        self.screen = pygame.display.set_mode((LOBBY_DISPLAY_WIDTH, LOBBY_DISPLAY_HEIGTH))
         pygame.display.set_caption(NAME)
         self.algorithm = None
         self.sett_lst(lst)
@@ -26,7 +27,7 @@ class DrawSettings:
         self.pos_x = SIDE_PADDING//2
 
     def drawList(self, index_colors = {}):
-        self.screen.fill(BK_COLOR)
+        self.screen.fill(BG_COLOR)
 
         for i, elm in enumerate(self.lst):
             x = self.pos_x + i * self.block_width
@@ -37,22 +38,19 @@ class DrawSettings:
             if i in index_colors:
                 color = index_colors[i]
             
-
             pygame.draw.rect(self.screen, (color), (x, y, self.block_width, DISPLAY_WIDTH))
 
         pygame.display.update()
 
 
 def update(draw_sett):
-    draw_sett.screen.fill(BK_COLOR)
+    draw_sett.screen.fill(BG_COLOR)
     draw_sett.drawList()
-
 
 def generateList(n):
     lst = [i for i in range(n)]
     random.shuffle(lst)
     return lst
-
 
 def drawText(draw_sett, algorithm, pos):
     font = pygame.font.get_default_font()
@@ -60,20 +58,11 @@ def drawText(draw_sett, algorithm, pos):
     font_render = font_obj.render(f"{algorithm}", True, (255,255,255))
     draw_sett.screen.blit(font_render, pos)
 
-
-def event(unsorted):
-    for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    main()
-
 def lobby(draw_sett):
-    # ALGORITHMS
-    # QUIT
     algorithms = ['1 - BubbleSort', '2 - SelectionSort', '3 - InsertionSort', '4 - MergeSort', 'ESC - Quit']
     buttons_pos = [(10, 20),(10, 50),(10, 80),(10, 110), (10, 140)]
     while True:
-        draw_sett.screen.fill(BK_COLOR)
+        draw_sett.screen.fill(BG_COLOR)
         x = 0
         for pos in buttons_pos:
             drawText(draw_sett, algorithms[x], pos)
@@ -93,40 +82,56 @@ def lobby(draw_sett):
                     return 3
 
         pygame.display.update()
-    
+
+def event():
+    for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    main()
+
 def main():
     clock = pygame.time.Clock()
     algorithms = [bubbleSort, selectionSort, insertionSort, mergeSort]
     unsorted = True
 
-    lst = generateList(100)
+    lst = generateList(NUMBER_OF_COLUMNS)
     draw_setts = DrawSettings(lst)
-    algorithm = algorithms[lobby(draw_setts)]
+    index = lobby(draw_setts)
+    algorithm = algorithms[index]
     alg_generator = algorithm(draw_setts)
 
     draw_setts.screen = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGTH))
     run = True
+
+    inicio = time()
     while run:
-        clock.tick(60) # FPS 
+        clock.tick(FPS)
+
         if unsorted:
-            if algorithm == mergeSort:  # Expecif case for mergeSort
+            """Expecif case for mergeSort"""
+            if algorithm == mergeSort:  
                     for merge in alg_generator:
-                        # entering in the node merge
-                        for n in merge: # traversing the merge (yield)
-                            event(unsorted)
+                        for n in merge: 
+                            event()
                     unsorted = False
+                    end = time()
                     print("FINISH")
+                    print(f"Time: {end-inicio:.2f} segundo(s)")
+                    
             else:
                 try:
                     next(alg_generator)
 
                 except StopIteration:
                     unsorted = False
+                    end = time()
                     print("FINISH")
+                    print(f"Time: {end-inicio:.2f} segundo(s)")
+                    
         else:
             update(draw_setts)
         
-        event(unsorted)
+        event()
     
 if __name__ == "__main__":
     main()
