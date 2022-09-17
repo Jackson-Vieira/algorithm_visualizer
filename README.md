@@ -19,8 +19,8 @@ Simple Algorithm Visualizer to train the concepts of sorting algorithms
 ### How do you can use this project
 
 ```
-git clone https://github.com/Jackson-Vieira/Visualizador-de-Algoritmos
-cd Visualizador-de-Algoritmos
+git clone https://github.com/Jackson-Vieira/Algorithm-Visualizer
+cd Algorithm-Visualizer
 pip install pygame
 python3 main.py
 ```
