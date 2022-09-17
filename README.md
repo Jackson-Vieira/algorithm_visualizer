@@ -9,7 +9,7 @@ Simple Algorithm Visualizer to train the concepts of sorting algorithms
 - [x] Insertion sort
 - [x] Bubble sort
 - [x] Merge sort
-- [] Quick sort
+- [ ] Quick sort
 
 ### Made with
 
@@ -19,8 +19,8 @@ Simple Algorithm Visualizer to train the concepts of sorting algorithms
 ### How do you can use this project
 
 ```
-git clone https://github.com/Jackson-Vieira/LearningLog
-cd LearningLog
+git clone https://github.com/Jackson-Vieira/Visualizador-de-Algoritmos
+cd Visualizador-de-Algoritmos
 pip install pygame
 python3 main.py
 ```
