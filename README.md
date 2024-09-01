@@ -11,6 +11,9 @@ Simple Algorithm Visualizer to train the concepts of sorting algorithms
 - [x] Merge sort
 - [ ] Quick sort
 
+### ToDo
+- [ ] - Improve screen information showing total of towers, total seconds, what algorithm
+
 ### Made with
 
 - Python3
